@@ -1,0 +1,27 @@
+name: Build Alpha Engine EXE
+on: [push] # Собирать каждый раз, когда ты пушишь код
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Dependencies
+        run: |
+          pip install customtkinter gpt4all pyinstaller
+          
+      - name: Compile EXE
+        run: |
+          pyinstaller --noconsole --onefile --name "AlphaEngine" engine.py
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: AlphaEngine_Build
+          path: dist/AlphaEngine.exe
