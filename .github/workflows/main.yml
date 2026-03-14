@@ -1,27 +1,31 @@
 name: Build Alpha Engine EXE
-on: [push] # Собирать каждый раз, когда ты пушишь код
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4 # Обновлено до v4
       
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # Обновлено до v5
         with:
           python-version: '3.11'
           
       - name: Install Dependencies
         run: |
-          pip install customtkinter gpt4all pyinstaller
+          python -m pip install --upgrade pip
+          pip install customtkinter gpt4all pyinstaller ddgs pyautogui
           
       - name: Compile EXE
         run: |
-          pyinstaller --noconsole --onefile --name "AlphaEngine" engine.py
+          # Собираем всё в один файл (--onefile)
+          pyinstaller --noconsole --onefile --name "AlphaEngine_v1" engine.py
           
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Finished EXE
+        uses: actions/upload-artifact@v4 # ФИКС ОШИБКИ: Теперь v4
         with:
-          name: AlphaEngine_Build
-          path: dist/AlphaEngine.exe
+          name: AlphaEngine_Windows_Build
+          path: dist/AlphaEngine_v1.exe
+          retention-days: 5
